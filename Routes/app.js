@@ -7,9 +7,9 @@ import productRoute from "./productRoute.js";
 import serviceRoute from "./serviceRoute.js";
 import jobRoute from "./jobRoute.js";
 import blogRoute from "./blogRoute.js";
+import dotenv from "dotenv";
 const app = express();
-
-// Middleware to parse JSON request bodies
+dotenv.config();
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
