@@ -1,6 +1,6 @@
 import express from "express";
 import { upload } from "../middlewares/multerMiddlware.js";
-import authonticate from "../middlewares/authonticate.js";
+// import authonticate from "../middlewares/authonticate.js";
 import {
   createBlog,
   deleteBlog,
@@ -12,17 +12,21 @@ const blogRoute = express.Router();
 
 blogRoute.post(
   "/",
-  authonticate,
+  // authonticate,
   upload.fields([{ name: "image", maxCount: 1 }]),
   createBlog
 );
 blogRoute.patch(
   "/:blogId",
-  authonticate,
+  // authonticate,
   upload.fields([{ name: "image", maxCount: 1 }]),
   updateBlog
 );
-blogRoute.delete("/:blogId", authonticate, deleteBlog);
+blogRoute.delete(
+  "/:blogId",
+  // authonticate,
+  deleteBlog
+);
 blogRoute.get("/", getBlogs);
 blogRoute.get("/:blogId", getSingleBlog);
 
