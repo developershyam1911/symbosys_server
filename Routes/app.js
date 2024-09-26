@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import userRoute from "./userRoute.js";
 import globalErrorHandling from "../middlewares/globalErrorHandling.js";
 import contactRoute from "./contactRoute.js";
 import productRoute from "./productRoute.js";
@@ -24,7 +23,6 @@ app.get("/", (req, res) => {
   res.json({ message: "ok" });
 });
 //routing
-app.use("/api/v1/user", userRoute);
 app.use("/api/v1/contact", contactRoute);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/service", serviceRoute);
