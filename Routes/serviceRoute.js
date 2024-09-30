@@ -6,6 +6,7 @@ import {
   getSingleService,
   updateService,
 } from "../Controllers/serviceController.js";
+import { upload } from "../middlewares/multerMiddlware.js";
 // import authonticate from "../middlewares/authonticate.js";
 
 const contactRoute = express.Router();
@@ -13,11 +14,13 @@ const contactRoute = express.Router();
 contactRoute.post(
   "/",
   // authonticate,
+  upload.fields([{ name: "image", maxCount: 1 }]),
   createService
 );
 contactRoute.patch(
   "/:service_id",
   // authonticate,
+  upload.fields([{ name: "image", maxCount: 1 }]),
   updateService
 );
 contactRoute.delete(

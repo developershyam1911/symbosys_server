@@ -1,17 +1,17 @@
 import mongoose, { Schema } from "mongoose";
-
-const serviceSchema = mongoose.Schema(
+const JobPostScheam = mongoose.Schema(
   {
-    name: {
+    degination: {
       type: String,
       required: true,
     },
-    image: {
+    qualification: {
       type: String,
       required: true,
     },
-    slug: {
+    pepol: {
       type: String,
+      required: true,
     },
     description: {
       type: String,
@@ -21,4 +21,4 @@ const serviceSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-export const Service = mongoose.model("services", serviceSchema);
+export const JobPost = mongoose.model("jobPost", JobPostScheam);

@@ -1,19 +1,19 @@
 import mongoose, { Schema } from "mongoose";
 
-const serviceSchema = mongoose.Schema(
+const aboutSchema = mongoose.Schema(
   {
-    name: {
+    main_about: {
       type: String,
       required: true,
     },
-    image: {
+    mission: {
+      type: String,
+    },
+    vision: {
       type: String,
       required: true,
     },
-    slug: {
-      type: String,
-    },
-    description: {
+    core_value: {
       type: String,
       required: true,
     },
@@ -21,4 +21,4 @@ const serviceSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-export const Service = mongoose.model("services", serviceSchema);
+export const About = mongoose.model("about", aboutSchema);
