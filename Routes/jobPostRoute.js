@@ -1,12 +1,5 @@
 import express from "express";
 import {
-  createCareer,
-  deleteCareer,
-  getCareer,
-  getSingleCareer,
-  updateCareer,
-} from "../Controllers/careerController.js";
-import {
   createJobPost,
   deleteaJob,
   getJob,

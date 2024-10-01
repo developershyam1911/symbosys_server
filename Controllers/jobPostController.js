@@ -93,11 +93,11 @@ const deleteaJob = async (req, res, next) => {
     return next(createHttpError(400, "job_id is missing"));
   }
   try {
-    const singleJob = await Job.findOne({ _id: job_id });
+    const singleJob = await JobPost.findOne({ _id: job_id });
     if (!singleJob) {
       return next(createHttpError(404, "single job not getting"));
     }
-    await Job.deleteOne({ _id: job_id });
+    await JobPost.deleteOne({ _id: job_id });
     return res
       .status(200)
       .json(new ApiResponse(200, job_id, "single job deleted successfully"));

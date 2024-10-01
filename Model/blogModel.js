@@ -23,6 +23,18 @@ const blogSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    keyword: {
+      type: String,
+      required: true,
+    },
+    meta_description: {
+      type: String,
+      required: true,
+    },
+    blog_category: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,

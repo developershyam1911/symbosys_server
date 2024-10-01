@@ -6,12 +6,14 @@ import {
   uploadOnCloudinary,
   deleteFromCloudinary,
 } from "../utils/cloudinary.js";
+import mongoose from "mongoose";
 const createBlog = async (req, res, next) => {
-  const { title, description } = req.body;
+  const { title, description, keyword, blog_category, meta_description } =
+    req.body;
   if (!title || !description) {
     return next(createHttpError(400, "All fileds is required"));
   }
-  const imageLocalpath = req.files.image[0].path;
+  const imageLocalpath = req.files?.image[0].path;
   if (!imageLocalpath) {
     return next(createHttpError(400, "image is required"));
   }
@@ -23,6 +25,9 @@ const createBlog = async (req, res, next) => {
       description,
       image: image.url,
       slug: blogSlug,
+      keyword,
+      blog_category,
+      meta_description,
     });
     return res
       .status(201)
@@ -34,7 +39,8 @@ const createBlog = async (req, res, next) => {
 };
 
 const updateBlog = async (req, res, next) => {
-  const { title, description } = req.body;
+  const { title, description, keyword, blog_category, meta_description } =
+    req.body;
   if (!title || !description) {
     return next(createHttpError(400, "All fileds is required"));
   }
@@ -73,6 +79,9 @@ const updateBlog = async (req, res, next) => {
         description,
         image: imageUrl,
         slug: updatedSlug,
+        keyword,
+        blog_category,
+        meta_description,
       },
       { new: true }
     );
@@ -101,9 +110,15 @@ const getBlogs = async (req, res, next) => {
 const getSingleBlog = async (req, res, next) => {
   const blogId = req.params.blogId;
   try {
-    const singleBlog = await Blog.findOne({ _id: blogId });
+    let singleBlog;
+    if (mongoose.Types.ObjectId.isValid(blogId)) {
+      singleBlog = await Blog.findById(blogId);
+    }
     if (!singleBlog) {
-      return next(createHttpError(400, "single Blog is not getting"));
+      singleBlog = await Blog.findOne({ slug: blogId });
+    }
+    if (!singleBlog) {
+      return next(createHttpError(404, "Blog not found"));
     }
     return res
       .status(200)
