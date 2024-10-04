@@ -1,33 +1,33 @@
 import multer from "multer";
 import path from "path";
 
-// Middleware for handling ZIP files
 const zipStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./public/uploads/zipfiles"); // Directory to save ZIP files
+    cb(null, "./public/temp");
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname); // Save the file with its original name
+    cb(null, `${Date.now()}-${file.originalname}`); // Add timestamp to avoid filename collisions
   },
 });
 
 // File filter to only allow ZIP files
 const zipFileFilter = (req, file, cb) => {
-  const fileTypes = /zip/; // Accept only ZIP files
+  const fileTypes = /zip/; // Only allow ZIP files
   const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+
   if (extname) {
-    return cb(null, true);
+    cb(null, true);
   } else {
-    cb(new Error("Only ZIP files are allowed!"));
+    cb(new Error("Only ZIP files are allowed!"), false);
   }
 };
 
-// Set file size limit (e.g., 50MB)
-const maxFileSize = 70 * 1024 * 1024; // 50 MB
+// Set max file size limit (e.g., 70MB)
+const maxFileSize = 70 * 1024 * 1024; // 70 MB
 
-// Create the upload middleware for ZIP files
+// Create upload middleware for ZIP files
 export const uploadZip = multer({
   storage: zipStorage,
   fileFilter: zipFileFilter,
-  limits: { fileSize: maxFileSize }, // Limit file size to 50MB
+  limits: { fileSize: maxFileSize }, // Set file size limit to 70MB
 });

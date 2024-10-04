@@ -9,68 +9,62 @@ import { Resource } from "../Model/resourceModel.js";
 const createresource = async (req, res, next) => {
   const { title, email, mobno, description, tech } = req.body;
   if (!title || !mobno) {
-    return next(createHttpError(400, "All fields are required"));
+    return next(createHttpError(400, "All fileds is required"));
   }
-
-  // Check if image file is present
-  const imageLocalpath = req.files?.image?.[0]?.path;
+  const imageLocalpath = req.files.image[0].path;
   if (!imageLocalpath) {
-    return next(createHttpError(400, "Image is required"));
+    return next(createHttpError(400, "image is required"));
   }
-
+  const image = await uploadOnCloudinary(imageLocalpath);
   try {
-    // Create a new resource with the local image path
     const resource = await Resource.create({
       title,
       email,
       mobno,
       description,
       tech,
-      image: imageLocalpath, // Store the local path of the image
+      image: image.url,
     });
-
     return res
       .status(201)
-      .json(new ApiResponse(200, resource, "Resource is added successfully"));
+      .json(new ApiResponse(200, resource, "resource is Added Successfully"));
   } catch (error) {
     console.log(error.message);
-    return next(createHttpError(400, "Error adding resource"));
+    return next(createHttpError(400, "resource Add Error"));
   }
 };
 
 const updateresource = async (req, res, next) => {
   const { title, email, mobno, description, tech } = req.body;
   if (!title || !mobno) {
-    return next(createHttpError(400, "All fields are required"));
+    return next(createHttpError(400, "All fileds is required"));
   }
-
   const resource_id = req.params.resource_id;
   if (!resource_id) {
-    return next(createHttpError(400, "Resource ID is missing"));
+    return next(createHttpError(400, "resource Id is missing"));
   }
-
   const singleresource = await Resource.findOne({ _id: resource_id });
   if (!singleresource) {
-    return next(createHttpError(400, "Resource not found"));
+    return next(createHttpError(400, "Single resource is not getting"));
   }
-
-  let imageUrl = singleresource.image;
-
-  // Check if a new image is being uploaded
-  if (req.files?.image) {
+  let imageUrl = Resource.image;
+  if (req.files.image) {
     const imageLocalpath = req.files.image[0].path;
     if (!imageLocalpath) {
-      return next(createHttpError(400, "Image is required"));
+      return next(createHttpError(400, "image is required"));
     }
-
-    // Optionally, you can delete the old image from the local directory here if needed
-    // Use fs.unlink() to remove the old image
-    // fs.unlinkSync(singleresource.image);
-
-    // Update the image URL to the new image path
-    imageUrl = imageLocalpath;
+    if (Resource.image) {
+      const oldFilePublicId = Resource.image.split("/").pop().split(".")[0];
+      await deleteFromCloudinary(oldFilePublicId);
+    }
+    const image = await uploadOnCloudinary(imageLocalpath);
+    if (!image.url) {
+      return next(
+        createHttpError(400, "Error while uploading image to Cloudinary")
+      );
+    }
+    imageUrl = image.url;
   }
-
   try {
     const updatedsingleresource = await Resource.findOneAndUpdate(
       { _id: resource_id },
@@ -80,26 +74,24 @@ const updateresource = async (req, res, next) => {
         mobno,
         description,
         tech,
-        image: imageUrl, // Update with the local path of the new image
+        image: imageUrl,
       },
       { new: true }
     );
-
     return res
       .status(201)
       .json(
         new ApiResponse(
           200,
           updatedsingleresource,
-          "Resource updated successfully"
+          "resource is Updated Successfully"
         )
       );
   } catch (error) {
     console.log(error.message);
-    return next(createHttpError(400, "Error updating resource"));
+    return next(createHttpError(400, "resource Update Error"));
   }
 };
-
 const getresources = async (req, res, next) => {
   try {
     const allresource = await Resource.find();
